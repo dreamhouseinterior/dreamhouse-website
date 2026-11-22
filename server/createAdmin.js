@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import './loadEnv.js'
 import bcrypt from 'bcryptjs'
 import mongoose from 'mongoose'
 import Admin from './models/Admin.js'
