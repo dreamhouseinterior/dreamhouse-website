@@ -1,12 +1,13 @@
 {
   "name": "interior-design-app",
   "version": "1.0.0",
-  "main": "index.js",
+  "private": true,
+  "main": "server/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
     "seed": "npm run seed --prefix server",
-    "build": "npm install --prefix server && npm install --prefix client --include=dev && npm run build --prefix client",
+    "postinstall": "npm install --prefix server && npm install --prefix client --include=dev && npm run build --prefix client",
+    "build": "npm run build --prefix client",
     "start": "node server/server.js"
   },
   "keywords": [],
