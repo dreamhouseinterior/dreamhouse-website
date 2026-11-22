@@ -1,8 +1,7 @@
 import axios from 'axios'
+import { ADMIN_BASE } from '../utils/config.js'
 
-// Vite proxies /api and /uploads to http://localhost:5000 (see vite.config.js).
-// For production, set baseURL to your deployed API URL.
-// const api = axios.create({ baseURL: '/api' })
+// Locally, Vite proxies /api and /uploads. In production set VITE_API_URL (e.g. https://your-api.onrender.com/api)
 const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || '/api' })
 
 api.interceptors.request.use((cfg) => {
@@ -15,9 +14,9 @@ api.interceptors.response.use(
   (res) => res,
   (err) => {
     const path = window.location.pathname
-    if (err.response?.status === 401 && path.startsWith('/admin') && !path.includes('login')) {
+    if (err.response?.status === 401 && path.startsWith(ADMIN_BASE) && !path.includes('login')) {
       localStorage.removeItem('token')
-      window.location.href = '/admin/login'
+      window.location.href = `${ADMIN_BASE}/login`
     }
     return Promise.reject(err)
   }

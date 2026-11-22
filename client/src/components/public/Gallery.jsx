@@ -14,7 +14,7 @@ export default function Gallery() {
   }, [cat])
 
   return (
-    <section id="portfolio" className="py-20 bg-[#F8F9FA]">
+    <section id="portfolio" className="py-24 mesh-light">
       <div className="max-w-7xl mx-auto px-4">
         <h2 className="text-3xl font-bold text-slate-800 text-center">Our Portfolio</h2>
         <div className="mt-8 flex flex-wrap justify-center gap-2">

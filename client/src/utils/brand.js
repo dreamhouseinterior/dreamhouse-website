@@ -1,13 +1,16 @@
 export const BRAND = {
   name: 'Dream House Interiors',
   tagline: 'Turnkey Home, Villa & Commercial Building Interiors in Bengaluru',
-  phone: '+91 98765 43210',
-  email: 'hello@example.com',
-  whatsapp: '919876543210', // country code + number, no + or spaces
+  phone: '+91 96201 74490',
+  phoneRaw: '+919620174490',
+  email: 'hello@dreamhouseinterior.com',
+  whatsapp: '919620174490',
+  website: 'https://dreamhouseinterior.com',
+  logo: '/logo.png',
   metrics: [
-    { value: '10+', label: 'Years Experience' },
-    { value: '500+', label: 'Homes & Buildings Delivered' },
-    { value: '45-Day', label: 'Handover Guarantee' },
-    { value: '10-Year', label: 'Warranty' },
+    { end: 10, suffix: '+', label: 'Years Experience' },
+    { end: 500, suffix: '+', label: 'Homes & Buildings Delivered' },
+    { end: 45, suffix: ' Days', label: 'Handover Guarantee' },
+    { end: 10, suffix: '-Year', label: 'Warranty' },
   ],
 }

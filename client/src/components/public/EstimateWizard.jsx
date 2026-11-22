@@ -54,7 +54,7 @@ export default function EstimateWizard() {
   }
 
   return (
-    <section id="estimate" className="py-20 bg-white">
+    <section id="estimate" className="py-24 mesh-white">
       <div className="max-w-3xl mx-auto px-4">
         <h2 className="text-3xl font-bold text-slate-800 text-center">Get Your Free Estimate</h2>
 
@@ -65,7 +65,7 @@ export default function EstimateWizard() {
         </div>
         <p className="text-sm text-slate-500 mt-2">Step {step} of 3</p>
 
-        <div className="mt-6 bg-[#F8F9FA] border rounded-2xl p-6">
+        <div className="mt-6 glass-light rounded-3xl p-6">
           {done ? (
             <div className="text-center py-8">
               <CheckCircle2 className="mx-auto text-teal-700" size={48} />
