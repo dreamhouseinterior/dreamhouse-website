@@ -1,0 +1,160 @@
+name: Deploy Full Stack Application to AWS EC2
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: production-deployment
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Deploy Application
+        uses: appleboy/ssh-action@v1.2.0
+
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
+
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          command_timeout: 15m
+
+          envs: MONGO_URI,JWT_SECRET,CLOUDINARY_URL
+
+          script: |
+            set -e
+
+            echo "Starting deployment..."
+
+            cd /home/ubuntu/app
+
+            echo "Pulling latest code..."
+            git pull --ff-only origin main
+
+            echo "Creating backend environment file..."
+
+            umask 077
+
+            printf 'PORT=5000\nMONGO_URI=%s\nJWT_SECRET=%s\nCLOUDINARY_URL=%s\n' \
+              "$MONGO_URI" \
+              "$JWT_SECRET" \
+              "$CLOUDINARY_URL" \
+              > server/.env
+
+            chmod 600 server/.env
+
+            echo "Installing dependencies and building frontend..."
+            npm ci
+
+            echo "Starting backend with PM2..."
+
+            if pm2 describe backend > /dev/null 2>&1; then
+              pm2 restart backend --update-env
+            else
+              pm2 start npm --name backend -- start
+            fi
+
+            pm2 save
+
+            echo "Checking Nginx..."
+            sudo nginx -t
+            sudo systemctl reload nginx
+
+            echo "Deployment completed successfully!"
+
+
+# name: Deploy Full Stack Application to AWS EC2
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   workflow_dispatch:
+
+# concurrency:
+#   group: production-deployment
+#   cancel-in-progress: false
+
+# jobs:
+#   deploy:
+#     name: Deploy to EC2
+#     runs-on: ubuntu-latest
+#     timeout-minutes: 20
+
+#     steps:
+#       - name: Checkout Repository
+#         uses: actions/checkout@v4
+
+#       - name: Deploy Application
+#         uses: appleboy/ssh-action@v1.2.0
+
+#         env:
+#           MONGO_URI: ${{ secrets.MONGO_URI }}
+#           JWT_SECRET: ${{ secrets.JWT_SECRET }}
+#           CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
+
+#         with:
+#           host: ${{ secrets.EC2_HOST }}
+#           username: ${{ secrets.EC2_USER }}
+#           key: ${{ secrets.EC2_SSH_KEY }}
+#           port: 22
+#           command_timeout: 15m
+
+#           envs: MONGO_URI,JWT_SECRET,CLOUDINARY_URL
+
+#           script: |
+#             set -e
+
+#             echo "Starting deployment..."
+
+#             cd /home/ubuntu/app
+
+#             echo "Pulling latest code..."
+#             git pull --ff-only origin main
+
+#             echo "Creating backend environment file..."
+
+#             umask 077
+
+#             printf 'PORT=5000\nMONGO_URI=%s\nJWT_SECRET=%s\nCLOUDINARY_URL=%s\n' \
+#               "$MONGO_URI" \
+#               "$JWT_SECRET" \
+#               "$CLOUDINARY_URL" \
+#               > server/.env
+
+#             chmod 600 server/.env
+
+#             echo "Installing dependencies and building frontend..."
+#             npm ci
+
+#             echo "Starting backend with PM2..."
+
+#             if pm2 describe backend > /dev/null 2>&1; then
+#               pm2 restart backend --update-env
+#             else
+#               pm2 start npm --name backend -- start
+#             fi
+
+#             pm2 save
+
+#             echo "Checking Nginx..."
+#             sudo nginx -t
+#             sudo systemctl reload nginx
+
+#             echo "Deployment completed successfully!"
